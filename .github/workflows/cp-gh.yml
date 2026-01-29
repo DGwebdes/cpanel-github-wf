@@ -49,6 +49,7 @@ jobs:
               mkdir -p target-repo/data
               cp -r dist/* target-repo/data
               cd target-repo
+              git add .
               git status
               if git diff --quiet; then
                 echo "No changes to push"
