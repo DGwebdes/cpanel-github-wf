@@ -8,7 +8,7 @@ on:
 env:
   TARGET_REPO_OWNER: "DGwebdes"
   TARGET_REPO_NAME: "CP-deploy"
-  TARGET_BRANCH: "main"
+  TARGET_BRANCH: "master"
 
 
 jobs:
