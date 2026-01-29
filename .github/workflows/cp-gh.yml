@@ -1,18 +1,58 @@
 name: cPanel Github CI/CD
-run-name: ${{github.actor}} is testing Actions
-on: [push]
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  TARGET_REPO_OWNER: "DGwebdes"
+  TARGET_REPO_NAME: "CP-deploy"
+  TARGET_BRANCH: "main"
+
+
 jobs:
-    Explore-Github-Actions:
+    build-and-deploy:
         runs-on: ubuntu-latest
+
         steps:
-            - run: echo "Triggered by ${{ github.event_name}}"
-            - run: echo "Running on ${{runner.os}}"
-            - run: echo "Branch ${{github.ref}} and repo ${{github.repository}}"
-            - name: Check out repository code
-              uses: actions/checkout@v5
-            - run: echo "The ${{github.repository}} has been cloned to runner"
-            - run: echo "Workflow ready to test code on runner"
-            - name: List files in the repository
-              run: |
-                  ls ${{github.workspace}}
-            - run: echo "Status ${{job.status}}"
+          - name: Check source code
+            uses: action/checkout@v6
+            with:
+              persist-credentials: false
+
+          - name: Set up nodejs
+            uses: actions/setup-node@v6
+            with:
+              node-version: 24
+              cache: npm
+
+          - name: Install dependencies
+            run: npm ci 
+
+          - name: Build
+            run: npm run build          
+
+          - name: Set up Git
+            run: |
+              git config --global user.name "Github Actions Bot"
+              git config --global user.email "actions@github.com"
+
+          - name: Clone target repo
+            run: |
+              git clone https://github.com/${{ env.TARGET_REPO_OWNER }}/${{ env.TARGET_REPO_NAME}}.git target-repo
+              git remote set-url origin https://${{ secrets.TARGET_REPO_PAT }}@github.com/${{ env.TARGET_REPO_OWNER }}/${{ env.TARGET_REPO_NAME }}.git
+
+          - name: Copy content to target-repo
+            run: |
+              mkdir -p target-repo/data
+              cp -r dist/* target-repo/data
+              cd target-repo
+              git status
+              if git diff --quiet; then
+                echo "No changes to push"
+              else
+                git add .
+                git commit -m 'Updating application. Workflow... flowing. (commit: ${{ github.sha }})'
+                git push origin ${{ env.TARGET_BRANCH }}
+
