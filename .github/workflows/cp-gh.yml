@@ -56,4 +56,5 @@ jobs:
                 git add .
                 git commit -m 'Updating application. Workflow... flowing. (commit: ${{ github.sha }})'
                 git push origin ${{ env.TARGET_BRANCH }}
+              fi
 
