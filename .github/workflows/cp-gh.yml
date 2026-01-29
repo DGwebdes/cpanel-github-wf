@@ -48,8 +48,8 @@ jobs:
             run: |
               cp -r dist/* ${{ env.TARGET_REPO_NAME }}
               cd ${{ env.TARGET_REPO_NAME }}
+              git add -A
               git status
-              git add .
               git commit -m 'Updating application. Workflow... flowing. (commit: ${{ github.sha }})' || echo "No changes to commit"
               git push origin ${{ env.TARGET_BRANCH }}
 
