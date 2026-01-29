@@ -51,5 +51,5 @@ jobs:
               git status
               git add .
               git commit -m 'Updating application. Workflow... flowing. (commit: ${{ github.sha }})' || echo "No changes to commit"
-              git push origin ${{ env.TARGET_BRANCH }}
+              git push origin ${{ env.TARGET_BRANCH }} HEAD
 
