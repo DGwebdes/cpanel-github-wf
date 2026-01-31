@@ -47,7 +47,7 @@ jobs:
           - name: Copy content to target-repo
             run: |
               cp -r dist/* ${{ env.TARGET_REPO_NAME }}
-              
+              cp .cpanel.yml ${{ env.TARGET_REPO_NAME }}
               cd ${{ env.TARGET_REPO_NAME }}
               git add -A
               git status
